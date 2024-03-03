@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Processing Web App</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #user_input {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #operation {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        #target_language_container{
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        #processBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #output-box {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            white-space: pre-wrap; /* Preserve line breaks in the output */
+        }
+    </style>
+</head>
+
+<body>
+    <h1> INSIGHTIFY</h1>
+
+    <textarea id="user_input" placeholder="Enter the text you want to process"></textarea>
+    <br>
+    <label for="operation">Choose an operation:</label>
+    <select id="operation">
+        <option value="1">Reformat Text</option>
+        <option value="2">Grammar Check</option>
+        <option value="3">Summarize Text</option>
+        <option value="4">Translate Text</option>
+        <option value="5">Additional Capabilities (Sentiment Analysis, Question-Answering)</option>
+        <option value="6">Summarize File Content</option>
+    </select>
+    <br>
+
+    <!-- Target language selection for translation -->
+    <div id="target_language_container" style="display: none;">
+        <label for="target_language">Choose target language:</label>
+        <select id="target_language">
+            <option value="de">German</option>
+            <option value="hi">Hindi</option>
+            <!-- Add more language options here if needed -->
+        </select>
+        <br>
+    </div>
+
+    <button type="button" id="processBtn">Process Text</button>
+
+    <!-- Separate box for displaying the output -->
+    <div id="output-box">
+        <h2>Output:</h2>
+        <pre id="output"></pre> <!-- Use <pre> to preserve formatting -->
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
