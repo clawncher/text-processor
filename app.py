@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from transformers import pipeline
 import os
 from werkzeug.utils import secure_filename
-from PyPDF2 import PdfReader
+from pdfminer.high_level import extract_text as extract_text_from_pdfminer
 from docx.document import Document
 
 UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
@@ -30,9 +30,7 @@ model_loader = ModelLoader()
 
 def extract_text_from_pdf(pdf_path):
     try:
-        with open(pdf_path, 'rb') as file:
-            reader = PdfReader(file)
-            text = ''.join(page.extract_text() for page in reader.pages)
+        text = extract_text_from_pdfminer(pdf_path)
         return text
     except Exception as e:
         logger.error(f"Failed to extract text from PDF: {e}")
@@ -153,7 +151,7 @@ def process_text_choice_5(user_input):
         'answer': answer
     })
 
-def process_text_choice_6(user_input):
+def process_text_choice_6():
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'})
 
@@ -171,14 +169,8 @@ def process_text_choice_6(user_input):
     else:
         return jsonify({'error': 'Unsupported file format'})
 
-process_text_choices = {
-    '1': process_text_choice_1,
-    '2': process_text_choice_2,
-    '3': process_text_choice_3,
-    '4': process_text_choice_4,
-    '5': process_text_choice_5,
-    '6': process_text_choice_6,
-}
+def process_text_choice_default(user_input):
+    return jsonify({'error': 'Invalid choice'})
 
 @app.route('/')
 def index():
@@ -186,13 +178,23 @@ def index():
 
 @app.route('/process_text', methods=['POST'])
 def process_text():
-    user_input = request.form['user_input']
-    choice = request.form['choice']
+    user_input = request.form.get('user_input')
+    choice = request.form.get('choice')
 
-    if choice in process_text_choices:
-        return process_text_choices[choice](user_input)
-
-    return jsonify({'error': 'Invalid choice'})
+    if choice == '1':
+        return process_text_choice_1(user_input)
+    elif choice == '2':
+        return process_text_choice_2(user_input)
+    elif choice == '3':
+        return process_text_choice_3(user_input)
+    elif choice == '4':
+        return process_text_choice_4(user_input)
+    elif choice == '5':
+        return process_text_choice_5(user_input)
+    elif choice == '6':
+        return process_text_choice_6()
+    else:
+        return process_text_choice_default(user_input)
 
 if __name__ == '__main__':
     logger.add("app.log", level="INFO")

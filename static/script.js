@@ -3,15 +3,17 @@ document.addEventListener('DOMContentLoaded', async function () {
         try {
             // Show loading message
             document.getElementById('output-box').innerText = 'Processing...';
-
-            let body = `user_input=${encodeURIComponent(inputText)}&choice=${selectedOption}`;
-
+    
+            const formData = new FormData();
+            formData.append('choice', selectedOption);
+            formData.append('user_input', inputText);
+    
             // If selectedOption is 4 (Translate Text), include the target language in the request body
             if (selectedOption === '4') {
                 const targetLanguage = document.getElementById('target_language').value;
-                body += `&target_language=${targetLanguage}`;
+                formData.append('target_language', targetLanguage);
             }
-
+    
             // If selectedOption is 6 (Summarize File Content), append file data to the request
             if (selectedOption === '6') {
                 const fileInput = document.getElementById('file_input');
@@ -21,28 +23,23 @@ document.addEventListener('DOMContentLoaded', async function () {
                     document.getElementById('output-box').innerText = 'Error: No file selected';
                     return;
                 }
-                body += `&file=${encodeURIComponent(file.name)}`;
-
-                // Display the chosen file name inside the "chosen file" option box
-                document.getElementById('chosen_file').innerText = file.name;
+                formData.append('file', file);
             }
-
+    
             const response = await fetch('/process_text', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: body
+                body: formData
             });
-
+    
             const data = await response.json();
-
+    
             // Hide loading message and display the result
             document.getElementById('output-box').innerText = JSON.stringify(data, null, 2);
         } catch (error) {
             console.error('Error:', error);
         }
     }
+    
 
     document.getElementById('operation').addEventListener('change', function () {
         var selectedOption = this.value;
