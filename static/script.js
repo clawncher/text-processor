@@ -12,6 +12,21 @@ document.addEventListener('DOMContentLoaded', async function () {
                 body += `&target_language=${targetLanguage}`;
             }
 
+            // If selectedOption is 6 (Summarize File Content), append file data to the request
+            if (selectedOption === '6') {
+                const fileInput = document.getElementById('file_input');
+                const file = fileInput.files[0];
+                if (!file) {
+                    // No file selected, display an error message and return
+                    document.getElementById('output-box').innerText = 'Error: No file selected';
+                    return;
+                }
+                body += `&file=${encodeURIComponent(file.name)}`;
+
+                // Display the chosen file name inside the "chosen file" option box
+                document.getElementById('chosen_file').innerText = file.name;
+            }
+
             const response = await fetch('/process_text', {
                 method: 'POST',
                 headers: {
@@ -37,6 +52,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             document.getElementById('target_language_container').style.display = 'block';
         } else {
             document.getElementById('target_language_container').style.display = 'none';
+        }
+
+        // Display or hide file input based on selected option
+        if (selectedOption === '6') {
+            document.getElementById('file_input_container').style.display = 'block';
+        } else {
+            document.getElementById('file_input_container').style.display = 'none';
         }
     });
 
